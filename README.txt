@@ -26,14 +26,14 @@ Enter c = 0 and ca = 0 for a purely frictional (sand) backfill.
 The program is a single Python script.  It needs Python 3.8 or newer and
 no other packages.  From the project folder, in a terminal:
 
-   python geotech\logspiral_passive.py
+   python logspiral_passive.py
 
 A standalone LogSpiralPassive.exe (no Python needed) is not kept in the
 repository.  It is built by the release workflow and attached to each
 GitHub Release.  To build one yourself:
 
    python -m pip install pyinstaller
-   python -m PyInstaller --onefile --console --name LogSpiralPassive geotech\logspiral_passive.py
+   python -m PyInstaller --onefile --console --name LogSpiralPassive logspiral_passive.py
 
 If you use the .exe:
  * The first time, Windows may show "Windows protected your PC".

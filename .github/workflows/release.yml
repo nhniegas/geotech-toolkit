@@ -1,0 +1,48 @@
+name: Release
+
+# Push a tag such as v1.0.0 to publish a GitHub Release with LogSpiralPassive.exe.
+# "Run workflow" (manual) builds the same files as a downloadable artifact only.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  package:
+    name: Build LogSpiralPassive.exe
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pyinstaller
+          python -m PyInstaller --onefile --console --clean --name LogSpiralPassive `
+            --distpath dist --workpath build/pyinstaller --specpath build logspiral_passive.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item README.txt dist/LogSpiralPassive-guide.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: dist/*
+          if-no-files-found: error
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $files = Get-ChildItem dist -File | ForEach-Object { $_.FullName }
+          gh release create "${{ github.ref_name }}" @files --title "${{ github.ref_name }}" --generate-notes
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
