@@ -36,3 +36,7 @@ GitHub Actions runs them on every push and pull request to `main`.
 These tools automate calculations; they do not replace engineering judgement.
 Check the results independently before using them for design, and read the
 limitations in the user guide.
+
+## License
+
+[MIT](LICENSE) © 2026 Nhel Harold Niegas. The software is provided as is, without warranty of any kind.
